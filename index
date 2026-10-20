@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chromebooks Vocabulary Flashcards</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Playfair Display & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .font-serif-heading {
+            font-family: var(--font-serif);
+        }
+
+        /* 3D Flip Card Effect */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .card-container {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+        }
+        .card-container:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-amber-600 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-800 flex items-center justify-center text-amber-100 shadow-lg shadow-amber-900/30 border border-amber-500/20">
+                    <i class="fa-solid fa-book-bookmark text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold font-serif-heading tracking-wide text-amber-100">Chromebooks Debate Vocabulary</h1>
+                    <p class="text-xs text-slate-400">Interactive Flashcards</p>
+                </div>
+            </div>
+
+            <!-- Mode Switcher -->
+            <div class="flex bg-slate-800/90 p-1 rounded-xl border border-slate-700/80 text-sm">
+                <button id="study-mode-btn" onclick="switchMode('study')" class="px-4 py-1.5 rounded-lg font-medium transition-all duration-200 bg-amber-600 text-white shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-cards-blank text-xs"></i> Study Mode
+                </button>
+                <button id="quiz-mode-btn" onclick="switchMode('quiz')" class="px-4 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i> Quiz Mode
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-1 flex flex-col justify-center w-full">
+        
+        <!-- STUDY MODE CONTENT -->
+        <div id="study-view" class="flex flex-col items-center gap-6 w-full">
+            
+            <!-- Progress Bar & Controls Header -->
+            <div class="w-full max-w-xl flex items-center justify-between text-sm text-slate-400 px-1">
+                <div class="flex items-center gap-2">
+                    <span id="progress-text" class="font-semibold text-amber-200 font-mono">1 / 5</span>
+                    <span class="text-slate-600">•</span>
+                    <span id="part-of-speech" class="capitalize italic bg-slate-800/80 px-2.5 py-0.5 rounded text-xs border border-slate-700 text-amber-300">adjective</span>
+                </div>
+                <button onclick="shuffleCards()" class="hover:text-amber-300 transition-colors flex items-center gap-1.5 text-xs bg-slate-800/80 hover:bg-slate-700/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-slate-300">
+                    <i class="fa-solid fa-shuffle"></i> Shuffle
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full max-w-xl h-1.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/40">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-amber-600 to-amber-500 transition-all duration-300 w-1/5"></div>
+            </div>
+
+            <!-- Interactive 3D Flashcard Container -->
+            <div class="perspective-1000 w-full max-w-xl h-96 cursor-pointer card-container" onclick="flipCard()">
+                <div id="flashcard" class="relative w-full h-full transform-style-3d transition-transform duration-500 rounded-2xl border border-slate-700/80 bg-slate-800/90 shadow-2xl">
+                    
+                    <!-- FRONT SIDE -->
+                    <div class="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-gradient-to-b from-slate-800 via-slate-800 to-slate-900 p-6 flex flex-col items-center justify-between text-center select-none border border-slate-700/50">
+                        <div class="w-full flex justify-between items-center text-xs text-slate-500">
+                            <span class="text-amber-500/70 font-mono text-[10px] uppercase tracking-widest">Card Front</span>
+                            <span>Click card to flip <i class="fa-solid fa-rotate-right ml-1"></i></span>
+                        </div>
+
+                        <!-- Card Illustration -->
+                        <div id="card-icon-container" class="my-auto py-2 text-amber-400/90 flex items-center justify-center">
+                            <!-- SVG dynamic insertion -->
+                        </div>
+
+                        <div>
+                            <h2 id="card-word" class="text-4xl font-bold font-serif-heading tracking-wide text-amber-100 mb-1">Ubiquitous</h2>
+                            <p id="card-phonetic" class="text-sm font-mono text-slate-400">/juːˈbɪk.wɪ.təs/</p>
+                        </div>
+
+                        <div class="text-xs text-slate-500 flex items-center gap-1">
+                            <span>Flip for definition</span>
+                        </div>
+                    </div>
+
+                    <!-- BACK SIDE -->
+                    <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-2xl bg-gradient-to-b from-slate-800 to-slate-900 border border-amber-600/40 p-6 flex flex-col justify-between text-center select-none shadow-amber-900/10">
+                        <div class="flex justify-between items-center text-xs text-amber-400/90 font-semibold tracking-wider uppercase font-mono">
+                            <span>Definition</span>
+                            <span class="text-slate-500 font-normal capitalize">Click to flip</span>
+                        </div>
+
+                        <div class="my-auto px-4">
+                            <p id="card-definition" class="text-xl md:text-2xl font-serif-heading font-medium text-slate-100 leading-relaxed">
+                                Present, appearing, or found everywhere.
+                            </p>
+                            <div class="mt-6 pt-4 border-t border-slate-700/60">
+                                <p id="card-example" class="text-sm text-slate-400 italic font-sans">
+                                    "Smartphones and Wi-Fi networks have become ubiquitous in modern high schools."
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-slate-500 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate"></i> Flip back
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center gap-4 mt-2">
+                <button onclick="prevCard()" class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 active:scale-95 text-slate-200 flex items-center justify-center transition-all shadow-lg">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button onclick="nextCard()" class="px-8 h-12 rounded-xl bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-semibold flex items-center gap-2 transition-all shadow-lg shadow-amber-900/30">
+                    Next <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- QUIZ MODE CONTENT -->
+        <div id="quiz-view" class="hidden flex-col items-center gap-6 w-full max-w-xl mx-auto">
+            
+            <!-- Quiz Progress & Score -->
+            <div class="w-full flex items-center justify-between text-sm text-slate-400 px-1">
+                <span id="quiz-progress-text" class="font-semibold text-slate-200 font-mono">Question 1 of 5</span>
+                <span id="quiz-score-text" class="text-amber-400 font-medium">Score: 0</span>
+            </div>
+
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/40">
+                <div id="quiz-progress-bar" class="h-full bg-amber-500 transition-all duration-300 w-1/5"></div>
+            </div>
+
+            <!-- Quiz Card Panel -->
+            <div class="w-full bg-slate-800 border border-slate-700/80 rounded-2xl p-6 shadow-2xl">
+                <div class="text-center mb-6">
+                    <span class="text-xs uppercase tracking-wider font-semibold text-amber-400 bg-amber-950/60 border border-amber-800/50 px-3 py-1 rounded-full">
+                        Identify Word
+                    </span>
+                    <h3 id="quiz-prompt" class="text-lg md:text-xl font-serif-heading font-medium text-slate-100 mt-4 leading-relaxed">
+                        What word means: "Present, appearing, or found everywhere."?
+                    </h3>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3">
+                    <!-- Dynamic option buttons inserted via JS -->
+                </div>
+            </div>
+
+            <!-- Quiz Control / Next Button -->
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-900/30">
+                Continue <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+
+            <!-- Quiz Results Screen -->
+            <div id="quiz-results" class="hidden text-center w-full bg-slate-800 border border-slate-700/80 rounded-2xl p-8 shadow-2xl">
+                <div class="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-serif-heading text-white mb-2">Quiz Complete!</h3>
+                <p id="quiz-final-score" class="text-slate-300 text-lg mb-6">You scored 5 out of 5</p>
+                <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-medium transition-all shadow-lg shadow-amber-900/30">
+                    Try Again
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
+        <p>Interactive Target Vocabulary Flashcards • High School ESL</p>
+    </footer>
+
+    <script>
+        // Vocabulary dataset with custom SVGs
+        const flashcardsData = [
+            {
+                word: "Ubiquitous",
+                phonetic: "/juːˈbɪk.wɪ.təs/",
+                partOfSpeech: "adjective",
+                definition: "Present, appearing, or found everywhere.",
+                example: "Smartphones and Wi-Fi networks have become ubiquitous in modern high schools.",
+                // World grid with signal waves icon
+                svg: `<svg class="w-24 h-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
+            },
+            {
+                word: "Cognitive",
+                phonetic: "/ˈkɒɡ.nə.tɪv/",
+                partOfSpeech: "adjective",
+                definition: "Related to mental processes such as thinking, learning, understanding, and remembering.",
+                example: "Reading physical textbooks promotes deep cognitive processing and stronger memory.",
+                // Brain / lightbulb thought icon
+                svg: `<svg class="w-24 h-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.04z"/></svg>`
+            },
+            {
+                word: "Equitable",
+                phonetic: "/ˈek.wɪ.tə.bəl/",
+                partOfSpeech: "adjective",
+                definition: "Fair, equal, and giving everyone what they need to succeed.",
+                example: "Giving every student a laptop creates an equitable learning environment.",
+                // Balance scale icon
+                svg: `<svg class="w-24 h-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 7l9-4 9 4"/><path d="M6 12l-3 6h6l-3-6z"/><path d="M18 12l-3 6h6l-3-6z"/><path d="M3 7h18"/></svg>`
+            },
+            {
+                word: "Detrimental",
+                phonetic: "/ˌdet.rɪˈmen.təl/",
+                partOfSpeech: "adjective",
+                definition: "Causing harm, damage, or disadvantage.",
+                example: "Constant phone notifications can have a detrimental effect on student concentration.",
+                // Warning triangle / crack icon
+                svg: `<svg class="w-24 h-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+            },
+            {
+                word: "Moderate",
+                phonetic: "/ˈmɒd.ər.eɪt/",
+                partOfSpeech: "verb",
+                definition: "To lessen the intensity, control, or bring something to a balanced middle state.",
+                example: "Schools are trying to moderate student screen time by using laptop carts instead of 1:1 devices.",
+                // Dial / adjustment control icon
+                svg: `<svg class="w-24 h-24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="12" x2="16.5" y2="7.5"/><line x1="12" y1="21" x2="12" y2="19"/><line x1="12" y1="5" x2="12" y2="3"/><line x1="3" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21" y2="12"/></svg>`
+            }
+        ];
+
+        let cards = [...flashcardsData];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let currentMode = 'study';
+
+        let quizIndex = 0;
+        let quizScore = 0;
+        let quizQuestions = [];
+        let optionSelected = false;
+
+        window.onload = function() {
+            renderCard();
+        };
+
+        function renderCard() {
+            const card = cards[currentIndex];
+            
+            const cardEl = document.getElementById('flashcard');
+            if (isFlipped) {
+                cardEl.classList.remove('rotate-y-180');
+                isFlipped = false;
+            }
+
+            // Populate Front
+            document.getElementById('card-word').textContent = card.word;
+            document.getElementById('card-phonetic').textContent = card.phonetic;
+            document.getElementById('card-icon-container').innerHTML = card.svg;
+            document.getElementById('part-of-speech').textContent = card.partOfSpeech;
+
+            // Populate Back
+            document.getElementById('card-definition').textContent = card.definition;
+            document.getElementById('card-example').textContent = `"${card.example}"`;
+
+            // Update Progress UI
+            const total = cards.length;
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${total}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / total) * 100}%`;
+        }
+
+        function flipCard() {
+            const cardEl = document.getElementById('flashcard');
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                cardEl.classList.add('rotate-y-180');
+            } else {
+                cardEl.classList.remove('rotate-y-180');
+            }
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cards.length;
+            renderCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            renderCard();
+        }
+
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            currentIndex = 0;
+            renderCard();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const studyBtn = document.getElementById('study-mode-btn');
+            const quizBtn = document.getElementById('quiz-mode-btn');
+            const studyView = document.getElementById('study-view');
+            const quizView = document.getElementById('quiz-view');
+
+            if (mode === 'study') {
+                studyBtn.className = "px-4 py-1.5 rounded-lg font-medium transition-all duration-200 bg-amber-600 text-white shadow-sm flex items-center gap-2";
+                quizBtn.className = "px-4 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2";
+                studyView.classList.remove('hidden');
+                studyView.classList.add('flex');
+                quizView.classList.add('hidden');
+                quizView.classList.remove('flex');
+            } else {
+                quizBtn.className = "px-4 py-1.5 rounded-lg font-medium transition-all duration-200 bg-amber-600 text-white shadow-sm flex items-center gap-2";
+                studyBtn.className = "px-4 py-1.5 rounded-lg font-medium transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2";
+                studyView.classList.add('hidden');
+                studyView.classList.remove('flex');
+                quizView.classList.remove('hidden');
+                quizView.classList.add('flex');
+                startQuiz();
+            }
+        }
+
+        function startQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            optionSelected = false;
+            
+            quizQuestions = [...flashcardsData].sort(() => Math.random() - 0.5);
+            
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.querySelector('#quiz-view > .bg-slate-800').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            optionSelected = false;
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const currentQ = quizQuestions[quizIndex];
+            const total = quizQuestions.length;
+
+            document.getElementById('quiz-progress-text').textContent = `Question ${quizIndex + 1} of ${total}`;
+            document.getElementById('quiz-score-text').textContent = `Score: ${quizScore}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((quizIndex + 1) / total) * 100}%`;
+            
+            document.getElementById('quiz-prompt').textContent = `What word means: "${currentQ.definition}"`;
+
+            let choices = [currentQ.word];
+            let distractors = flashcardsData.map(item => item.word).filter(w => w !== currentQ.word);
+            distractors.sort(() => Math.random() - 0.5);
+            
+            choices = choices.concat(distractors.slice(0, 3)).sort(() => Math.random() - 0.5);
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            choices.forEach(option => {
+                const button = document.createElement('button');
+                button.className = "w-full py-3.5 px-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 text-left font-serif-heading text-lg font-medium transition-all flex items-center justify-between";
+                button.innerHTML = `<span>${option}</span> <i class="fa-regular fa-circle text-slate-500 text-sm"></i>`;
+                button.onclick = () => selectQuizOption(button, option, currentQ.word);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectQuizOption(selectedBtn, selectedOption, correctAnswer) {
+            if (optionSelected) return;
+            optionSelected = true;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            const buttons = optionsContainer.querySelectorAll('button');
+
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('hover:bg-slate-700/80');
+                const wordText = btn.querySelector('span').textContent;
+
+                if (wordText === correctAnswer) {
+                    btn.classList.add('bg-emerald-900/40', 'border-emerald-500', 'text-emerald-200');
+                    btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-400 text-sm";
+                } else if (btn === selectedBtn) {
+                    btn.classList.add('bg-rose-900/40', 'border-rose-500', 'text-rose-200');
+                    btn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-400 text-sm";
+                }
+            });
+
+            if (selectedOption === correctAnswer) {
+                quizScore++;
+                document.getElementById('quiz-score-text').textContent = `Score: ${quizScore}`;
+            }
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            quizIndex++;
+            if (quizIndex < quizQuestions.length) {
+                renderQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.querySelector('#quiz-view > .bg-slate-800').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+            
+            const resultsEl = document.getElementById('quiz-results');
+            resultsEl.classList.remove('hidden');
+            
+            document.getElementById('quiz-final-score').textContent = `You scored ${quizScore} out of ${quizQuestions.length}`;
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (currentMode === 'study') {
+                if (e.key === 'ArrowRight') nextCard();
+                if (e.key === 'ArrowLeft') prevCard();
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    flipCard();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
